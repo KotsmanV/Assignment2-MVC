@@ -10,7 +10,7 @@ namespace Assignment2.Repositories
 {
     public class TrainerRepo
     {
-        ApplicationDbContext db = new ApplicationDbContext();
+        readonly ApplicationDbContext db = new ApplicationDbContext();
 
         public List<Trainer> GetAll()
         {
@@ -56,15 +56,20 @@ namespace Assignment2.Repositories
                 {
                     Specialization spec = db.Specializations.Find(id);
                     if (spec != null)
+                    {
                         trainer.Specializations.Add(spec);
+                    }
                 }
             }
-
             db.Entry(trainer).State = EntityState.Modified;
             db.SaveChanges();
         }
 
-
+        public void Attach(Trainer trainer)
+        {
+            db.Trainers.Attach(trainer);
+            db.Entry(trainer).Collection("Specializations").Load();
+        }
 
         public void Delete(int id)
         {
@@ -75,7 +80,23 @@ namespace Assignment2.Repositories
             db.SaveChanges();
         }
 
+        private bool disposed = false;
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                if (disposing)
+                {
+                    db.Dispose();
+                }
+            }
+        }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
     }
 }

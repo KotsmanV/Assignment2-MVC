@@ -10,6 +10,7 @@ namespace Assignment2.Models
     {
         public int SpecializationId { get; set; }
         [Required(ErrorMessage = "Specialization must have a title.")]
+        [Display(Name = "Specialization:")]
         public string SpecializationType { get; set; }
 
         //Navigation properties

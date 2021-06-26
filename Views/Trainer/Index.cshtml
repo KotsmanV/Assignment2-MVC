@@ -9,7 +9,19 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-<table class="table">
+
+@using (Html.BeginForm("Index", "Trainer", FormMethod.Get))
+{
+    @*<input type="text" name="searchFirstName" value="" />*@
+
+    @Html.TextBox("searchFirstName", null, new { type = "search", @class = "form-control", placeholder = "Search by First Name" })
+    @Html.TextBox("searchLastName", null, new { type = "search", @class = "form-control", placeholder = "Search by Last Name" })
+    <input type="submit" value="Search for Trainer" class="btn btn-primary" />
+    <input id="resetButton" type="button" name="Clear Form" value="Clear Form" class="btn btn-danger" />
+}
+
+
+<table class="table table-hover">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.FirstName)
@@ -23,35 +35,50 @@
         <th>
             @Html.DisplayNameFor(model => model.DateHired)
         </th>
+        <th>@Html.DisplayNameFor(model =>model.Specializations) </th>
         <th>
             @Html.DisplayNameFor(model => model.IsAvailable)
         </th>
-        <th></th>
+        <th>
+            Actions
+        </th>
     </tr>
 
-@foreach (var trainer in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => trainer.FirstName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => trainer.LastName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => trainer.Salary)
-        </td>
-        <td>
-            @trainer.DateHired.ToString("d")
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => trainer.IsAvailable)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=trainer.TrainerId }) |
-            @Html.ActionLink("Details", "Details", new { id=trainer.TrainerId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=trainer.TrainerId })
-        </td>
-    </tr>
-}
+    @foreach (var trainer in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => trainer.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => trainer.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => trainer.Salary)
+            </td>
+            <td>
+                @trainer.DateHired.ToString("d")
+            </td>
+            <td>
+                <ul>
+                    @foreach (var spec in trainer.Specializations)
+                    {
+                        <li>@spec.SpecializationType</li>
+                    }
+                </ul>
 
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => trainer.IsAvailable)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = trainer.TrainerId }) |
+                @Html.ActionLink("Details", "Details", new { id = trainer.TrainerId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = trainer.TrainerId })
+            </td>
+        </tr>
+    }
 </table>
+
+
+

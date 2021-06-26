@@ -24,22 +24,29 @@
                 Specialization s2 = new Specialization() { SpecializationType = "Vocals" };
                 Specialization s3 = new Specialization() { SpecializationType = "Electric Guitar" };
                 Specialization s4 = new Specialization() { SpecializationType = "Electric Bass" };
-                Specialization s5 = new Specialization() { SpecializationType = "Theory" };
+                Specialization s5 = new Specialization() { SpecializationType = "Popular Music Theory" };
+                Specialization s6 = new Specialization() { SpecializationType = "Violin" };
+                Specialization s7 = new Specialization() { SpecializationType = "Piano" };
+                Specialization s8 = new Specialization() { SpecializationType = "Trumpet" };
+                Specialization s9 = new Specialization() { SpecializationType = "Saxophone" };
+                Specialization s10 = new Specialization() { SpecializationType = "Flute" };
+                Specialization s11 = new Specialization() { SpecializationType = "Harp" };
+                Specialization s12 = new Specialization() { SpecializationType = "Bassoon" };
+                Specialization s13 = new Specialization() { SpecializationType = "Clarinet" };
+                Specialization s14 = new Specialization() { SpecializationType = "Opera" };
+                Specialization s15 = new Specialization() { SpecializationType = "Classical Music Theory" };
 
-                context.Specializations.AddOrUpdate(s => s.SpecializationType, s1, s2, s3, s4, s5);
+                context.Specializations.AddOrUpdate(s => s.SpecializationType, s1, s2, s3, s4, s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15);
 
-                Trainer t1 = new Trainer() { FirstName = "Naomi", LastName = "Nagata", Salary = 1021.34m, DateHired = new DateTime(2019, 9, 1), IsAvailable = true };
-                t1.Specializations = new List<Specialization>() { s1 };
-                Trainer t2 = new Trainer() { FirstName = "James", LastName = "Holden", Salary = 985.73m, DateHired = new DateTime(2019, 9, 1), IsAvailable = true };
-                t2.Specializations = new List<Specialization>() { s2 };
-                Trainer t3 = new Trainer() { FirstName = "Amos", LastName = "Burton", Salary = 802.14m, DateHired = new DateTime(2019, 9, 1), IsAvailable = true };
-                t3.Specializations = new List<Specialization>() { s3, s4 };
-                Trainer t4 = new Trainer() { FirstName = "Anderson", LastName = "Dawes", Salary = 1482.99m, DateHired = new DateTime(2013, 3, 6), IsAvailable = false };
-                t4.Specializations = new List<Specialization>() { s5 };
-                Trainer t5 = new Trainer() { FirstName = "Bobbie", LastName = "Draper", Salary = 1245.75m, DateHired = new DateTime(2015, 8, 3), IsAvailable = false };
-                t4.Specializations = new List<Specialization>() { s5 };
-
-                context.Trainers.AddOrUpdate(t => new { t.FirstName, t.LastName }, t1, t2, t3, t4, t5);
+                Trainer t1 = new Trainer() { FirstName = "Naomi", LastName = "Nagata", Salary = 1021.34m, DateHired = new DateTime(2019, 9, 1), IsAvailable = true, Specializations = new List<Specialization>() { s1 } };
+                Trainer t2 = new Trainer() { FirstName = "James", LastName = "Holden", Salary = 985.73m, DateHired = new DateTime(2019, 9, 1), IsAvailable = true, Specializations = new List<Specialization>() { s2,s14 } };
+                Trainer t3 = new Trainer() { FirstName = "Amos", LastName = "Burton", Salary = 802.14m, DateHired = new DateTime(2019, 9, 1), IsAvailable = true, Specializations = new List<Specialization>() { s3, s4 } };
+                Trainer t4 = new Trainer() { FirstName = "Anderson", LastName = "Dawes", Salary = 1482.99m, DateHired = new DateTime(2013, 3, 6), IsAvailable = false, Specializations = new List<Specialization>() { s5,s15 } };
+                Trainer t5 = new Trainer() { FirstName = "Bobbie", LastName = "Draper", Salary = 1245.75m, DateHired = new DateTime(2015, 8, 3), IsAvailable = false, Specializations = new List<Specialization>() { s5,s15,s7 } };
+                Trainer t6 = new Trainer() { FirstName = "Chrisjen", LastName = "Avasarala", Salary = 1467.21m, DateHired = new DateTime(2012, 1, 15), IsAvailable = true, Specializations = new List<Specialization>() { s5,s15,s7 } };
+                Trainer t7 = new Trainer() { FirstName = "Marco", LastName = "Inaros", Salary = 543.34m, DateHired = new DateTime(2020, 9, 15), IsAvailable = true, Specializations = new List<Specialization>() { s12,s13 } };
+                Trainer t8 = new Trainer() { FirstName = "Camina", LastName = "Drummer", Salary = 1130.11m, DateHired = new DateTime(2018, 10, 1), IsAvailable = true, Specializations = new List<Specialization>() { s8,s9 } };
+                context.Trainers.AddOrUpdate(t => new { t.FirstName, t.LastName }, t1, t2, t3, t4, t5,t6,t7,t8);
                 context.SaveChanges();
 
             }

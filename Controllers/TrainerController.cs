@@ -15,13 +15,13 @@ namespace Assignment2.Controllers
 {
     public class TrainerController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
-        private readonly TrainerRepo tr = new TrainerRepo();
+        private readonly ApplicationDbContext db = new ApplicationDbContext();
+        private readonly TrainerRepo trainerRepo = new TrainerRepo();
 
         // GET: Trainer
         public ActionResult Index()
         {
-            return View(tr.GetAll());
+            return View(trainerRepo.GetAll());
         }
 
         // GET: Trainer/Details/5
@@ -31,7 +31,7 @@ namespace Assignment2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Trainer trainer = tr.FindById(id);
+            Trainer trainer = trainerRepo.FindById(id);
             if (trainer == null)
             {
                 return HttpNotFound();
@@ -43,6 +43,8 @@ namespace Assignment2.Controllers
         public ActionResult Create()
         {
             TrainerCreateVM tc = new TrainerCreateVM();
+            //ViewBag.TrainerSpecializations = new SelectList(db.Specializations.ToList(), "Specialization", "Specialization");
+            //TrainerSpecializationViewBags();
             return View(tc);
         }
 
@@ -55,10 +57,11 @@ namespace Assignment2.Controllers
         {
             if (ModelState.IsValid)
             {
-                tr.Create(trainer, SpecializationIds);
+                trainerRepo.Create(trainer, SpecializationIds);
                 return RedirectToAction("Index");
             }
             TrainerCreateVM tc = new TrainerCreateVM();
+            //TrainerSpecializationViewBags();
             return View(tc);
         }
 
@@ -69,28 +72,30 @@ namespace Assignment2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Trainer trainer = db.Trainers.Find(id);
+            Trainer trainer = trainerRepo.FindById(id);
             if (trainer == null)
             {
                 return HttpNotFound();
             }
-            return View(trainer);
+            TrainerEditVM te = new TrainerEditVM(trainer);
+            return View(te);
         }
-
         // POST: Trainer/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "TrainerId,FirstName,LastName,Salary,DateHired,IsAvailable")] Trainer trainer)
+        public ActionResult Edit([Bind(Include = "TrainerId,FirstName,LastName,Salary,DateHired,IsAvailable")] Trainer trainer, IEnumerable<int> SpecializationIds)
         {
+            //TODO 1: Highlight selected specializations.
             if (ModelState.IsValid)
             {
-                db.Entry(trainer).State = EntityState.Modified;
-                db.SaveChanges();
+                trainerRepo.Edit(trainer, SpecializationIds);
                 return RedirectToAction("Index");
             }
-            return View(trainer);
+            trainerRepo.Attach(trainer);
+            TrainerEditVM te = new TrainerEditVM(trainer);
+            return View(te);
         }
 
         // GET: Trainer/Delete/5
@@ -100,7 +105,7 @@ namespace Assignment2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Trainer trainer = db.Trainers.Find(id);
+            Trainer trainer = trainerRepo.FindById(id);
             if (trainer == null)
             {
                 return HttpNotFound();
@@ -113,11 +118,10 @@ namespace Assignment2.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Trainer trainer = db.Trainers.Find(id);
-            db.Trainers.Remove(trainer);
-            db.SaveChanges();
+            trainerRepo.Delete(id);
             return RedirectToAction("Index");
         }
+
 
         protected override void Dispose(bool disposing)
         {
@@ -126,6 +130,13 @@ namespace Assignment2.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        public void TrainerSpecializationViewBags()
+        {
+            var specs = db.Specializations.ToList();
+
+            ViewBag.TrainerSpecializations = new SelectList(specs, "Specialization", "Specialization");
         }
     }
 }
