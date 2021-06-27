@@ -1,4 +1,10 @@
-﻿@model IEnumerable<Assignment2.Models.Trainer>
+﻿@*@model IEnumerable<Assignment2.Models.Trainer>*@
+@model PagedList.IPagedList<Assignment2.Models.Trainer>
+
+
+@using PagedList;
+@using PagedList.Mvc;
+
 
 @{
     ViewBag.Title = "Index";
@@ -10,34 +16,66 @@
     @Html.ActionLink("Create New", "Create")
 </p>
 
+@*@using (Html.BeginForm())
+{
+    <label for="selectOption">Select Option:</label>
+    <select id="selectOption" name="selectOption">
+        <option value="FirstName">First Name</option>
+        <option value="LastName">Last Name</option>
+        <option value="DateHired">Date Hired</option>
+        <option value="Salary">Salary</option>
+    </select>
+    <br />
+    @Html.Label("Search Text")
+    @Html.TextBox("searchText", null, new { type = "search", @class = "form-control", placeholder = "Search" })
+    <input type="submit" value="Search" />
+}*@
+
+
+
 @using (Html.BeginForm("Index", "Trainer", FormMethod.Get))
 {
-    @*<input type="text" name="searchFirstName" value="" />*@
 
-    @Html.TextBox("searchFirstName", null, new { type = "search", @class = "form-control", placeholder = "Search by First Name" })
-    @Html.TextBox("searchLastName", null, new { type = "search", @class = "form-control", placeholder = "Search by Last Name" })
+    @Html.TextBox("searchFirstName", null, new { type = "search", @class = "form-control", placeholder = "Search by First Name", autocomplete = "off" })
+    @Html.TextBox("searchLastName", null, new { type = "search", @class = "form-control", placeholder = "Search by Last Name", autocomplete = "off" })
+    @Html.TextBox("searchSalary", null, new { type = "search", @class = "form-control", placeholder = "Search by Salary", autocomplete = "off" })
+    @Html.TextBox("searchDateHired", null, new { type = "date", @class = "form-control", placeholder = "Search by Date Hired", autocomplete = "off" })
+    @*@Html.TextBox("searchAvailability", null, new { type = "search", @class = "form-control", placeholder = "Search by Availability" })
+    @Html.TextBox("searchSpecialization", null, new { type = "search", @class = "form-control", placeholder = "Search by Specialization" })*@
     <input type="submit" value="Search for Trainer" class="btn btn-primary" />
     <input id="resetButton" type="button" name="Clear Form" value="Clear Form" class="btn btn-danger" />
 }
 
 
+
+
+
+
 <table class="table table-hover">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.FirstName)
+            @Html.ActionLink("Last Name", "Index", "Trainer", new { sortOrder = ViewBag.ByLastName }, null)
+            @*@Html.DisplayNameFor(model => model.LastName)*@
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.LastName)
+            @Html.ActionLink("First Name", "Index", "Trainer", new { sortOrder = ViewBag.ByFirstName }, null)
+            @* @Html.DisplayNameFor(model => model.FirstName)*@
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Salary)
+            @Html.ActionLink("Salary", "Index", "Trainer", new { sortOrder = ViewBag.BySalary }, null)
+            @*@Html.DisplayNameFor(model => model.Salary)*@
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.DateHired)
+            @Html.ActionLink("Date Hired", "Index", "Trainer", new { sortOrder = ViewBag.ByDateHired }, null)
+            @*@Html.DisplayNameFor(model => model.DateHired)*@
         </th>
-        <th>@Html.DisplayNameFor(model =>model.Specializations) </th>
         <th>
-            @Html.DisplayNameFor(model => model.IsAvailable)
+            Specializations
+            @*@Html.DisplayNameFor(model => model.Specializations)*@
+        </th>
+        <th>
+            @Html.ActionLink("Availability", "Index", "Trainer", new { sortOrder = ViewBag.ByAvailability }, null)
+            @*@Html.DisplayNameFor(model => model.IsAvailable)*@
         </th>
         <th>
             Actions
@@ -48,11 +86,12 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => trainer.FirstName)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => trainer.LastName)
             </td>
+            <td>
+                @Html.DisplayFor(modelItem => trainer.FirstName)
+            </td>
+
             <td>
                 @Html.DisplayFor(modelItem => trainer.Salary)
             </td>
@@ -80,5 +119,21 @@
     }
 </table>
 
+Page @(Model.PageCount <Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
+@Html.PagedListPager(Model, x => Url.Action("Index", "GoTCharacter", new { page = x }))
+
+
+@section ResetSearchJS{
+    <script>
+        $("#resetButton").click(function (e) {
+            $("#searchFirstName").val("");
+            $("#searchLastName").val("");
+            $("#searchSalary").val("");
+            $("#searchDateHired").val("");
+            window.location.href='@Url.Action("Index", "Trainer")';
+        });
+    </script>
+
+}
 

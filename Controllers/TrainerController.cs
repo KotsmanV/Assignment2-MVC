@@ -10,6 +10,7 @@ using Assignment2.DAL;
 using Assignment2.Models;
 using Assignment2.Models.ViewModels;
 using Assignment2.Repositories;
+using PagedList;
 
 namespace Assignment2.Controllers
 {
@@ -19,9 +20,77 @@ namespace Assignment2.Controllers
         private readonly TrainerRepo trainerRepo = new TrainerRepo();
 
         // GET: Trainer
-        public ActionResult Index()
+        public ActionResult Index(string searchText, string selectOption, string searchFirstName, string searchLastName, string searchSpecialization, decimal? searchSalary, DateTime? searchDateHired, bool? searchAvailability, string sortOrder, int? pSize, int? page )
         {
-            return View(trainerRepo.GetAll());
+            var trainers = trainerRepo.GetAll();
+            #region Sorting
+
+            ViewBag.ByLastName = String.IsNullOrEmpty(sortOrder) ? "LastNameDesc" : "";
+            ViewBag.ByFirstName = sortOrder == "FirstNameAsc" ? "FirstNameDesc" : "FirstNameAsc";
+            ViewBag.BySpecialization = sortOrder == "SpecializationAsc" ? "SpecializationDesc" : "SpecializationAsc";
+            ViewBag.BySalary = sortOrder == "SalaryAsc" ? "SalaryDesc" : "SalaryAsc";
+            ViewBag.ByDateHired = sortOrder == "DateHiredAsc" ? "DateHiredDesc" : "DateHiredAsc";
+            ViewBag.ByAvailability = sortOrder == "Available" ? "Unavailable" : "Available";
+
+            switch (sortOrder)
+            {
+                case "LastNameDesc": trainers = trainers.OrderByDescending(x => x.LastName).ToList(); break;
+
+                case "FirstNameAsc": trainers = trainers.OrderBy(x => x.FirstName).ToList(); break;
+                case "FirstNameDesc": trainers = trainers.OrderByDescending(x => x.FirstName).ToList(); break;
+
+                //case "SpecializationAsc": trainers = trainers.OrderBy(x => x.Specializations).ToList(); break;
+                //case "SpecializationDesc": trainers = trainers.OrderByDescending(x => x.Specializations).ToList(); break;
+
+                case "DateHiredAsc": trainers = trainers.OrderBy(x => x.DateHired).ToList(); break;
+                case "DateHiredDesc": trainers = trainers.OrderByDescending(x => x.DateHired).ToList(); break;
+                
+                case "SalaryAsc": trainers = trainers.OrderBy(x => x.Salary).ToList(); break;
+                case "SalaryDesc": trainers = trainers.OrderByDescending(x => x.Salary).ToList(); break;
+                    
+                case "Available": trainers = trainers.OrderBy(x => x.IsAvailable).ToList(); break;
+                case "Unavailable": trainers = trainers.OrderByDescending(x => x.IsAvailable).ToList(); break;
+
+                default: trainers = trainers.OrderBy(x => x.LastName).ToList(); break;
+            }
+            #endregion
+
+            #region Filtering
+            if (!String.IsNullOrEmpty(searchText))
+            {
+                switch (selectOption)
+                {
+                    case "First Name": trainers = trainers.Where(x => x.FirstName.ToUpper().Contains(searchText.ToUpper())).ToList(); break;
+                    case "Last Name": trainers = trainers.Where(x => x.LastName.ToUpper().Contains(searchText.ToUpper())).ToList(); break;
+                    case "Date Hired": trainers = trainers.Where(x => x.DateHired == DateTime.Parse(searchText)).ToList(); break;
+                    case "Salary": trainers = trainers.Where(x => x.Salary == Decimal.Parse(searchText)).ToList(); break;
+                }
+            }
+
+
+            if (!String.IsNullOrEmpty(searchFirstName))
+                trainers = trainers.Where(x => x.FirstName.ToUpper().Contains(searchFirstName.ToUpper())).ToList();
+
+            if (!String.IsNullOrEmpty(searchLastName))
+                trainers = trainers.Where(x => x.LastName.ToUpper().Contains(searchLastName.ToUpper())).ToList();
+
+            if (searchDateHired != null)
+                trainers = trainers.Where(x => x.DateHired == searchDateHired).ToList();
+
+            //TODO 3: Refine Search salary
+            if (searchSalary > 0)
+                trainers = trainers.Where(x => x.Salary == searchSalary).ToList();
+
+            //TODO 4: Search by Availability
+
+            //TODO 2: Search by Specialization
+            //if (!String.IsNullOrEmpty(searchSpecialization))
+            //    trainers = trainers.Where(x => x.Specializations.Where(s => s.SpecializationType.ToUpper().Contains(searchSpecialization.ToUpper())).ToList();
+            #endregion
+
+            int pageSize = pSize ?? 10;
+            int pageNumber = page ?? 1;
+            return View(trainers.ToPagedList(pageNumber,pageSize));
         }
 
         // GET: Trainer/Details/5
@@ -77,6 +146,7 @@ namespace Assignment2.Controllers
             {
                 return HttpNotFound();
             }
+            //TODO 5: Check viewmodel instances
             TrainerEditVM te = new TrainerEditVM(trainer);
             return View(te);
         }
