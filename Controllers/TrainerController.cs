@@ -20,7 +20,7 @@ namespace Assignment2.Controllers
         private readonly TrainerRepo trainerRepo = new TrainerRepo();
 
         // GET: Trainer
-        public ActionResult Index(string searchText, string selectOption, string searchFirstName, string searchLastName, string searchSpecialization, decimal? searchSalary, DateTime? searchDateHired, bool? searchAvailability, string sortOrder, int? pSize, int? page )
+        public ActionResult Index(string searchText, string selectOption, string sortOrder, int? pSize, int? page )
         {
             var trainers = trainerRepo.GetAll();
             #region Sorting
@@ -60,32 +60,13 @@ namespace Assignment2.Controllers
             {
                 switch (selectOption)
                 {
-                    case "First Name": trainers = trainers.Where(x => x.FirstName.ToUpper().Contains(searchText.ToUpper())).ToList(); break;
-                    case "Last Name": trainers = trainers.Where(x => x.LastName.ToUpper().Contains(searchText.ToUpper())).ToList(); break;
-                    case "Date Hired": trainers = trainers.Where(x => x.DateHired == DateTime.Parse(searchText)).ToList(); break;
+                    case "FirstName": trainers = trainers.Where(x => x.FirstName.ToUpper().Contains(searchText.ToUpper())).ToList(); break;
+                    case "LastName": trainers = trainers.Where(x => x.LastName.ToUpper().Contains(searchText.ToUpper())).ToList(); break;
+                    case "DateHired": trainers = trainers.Where(x => x.DateHired == DateTime.Parse(searchText)).ToList(); break;
                     case "Salary": trainers = trainers.Where(x => x.Salary == Decimal.Parse(searchText)).ToList(); break;
+                    case "Specialization": trainers = trainers.Where(x => x.Specializations.Any(y => y.SpecializationType.Equals(searchText))).ToList(); break;
                 }
             }
-
-
-            if (!String.IsNullOrEmpty(searchFirstName))
-                trainers = trainers.Where(x => x.FirstName.ToUpper().Contains(searchFirstName.ToUpper())).ToList();
-
-            if (!String.IsNullOrEmpty(searchLastName))
-                trainers = trainers.Where(x => x.LastName.ToUpper().Contains(searchLastName.ToUpper())).ToList();
-
-            if (searchDateHired != null)
-                trainers = trainers.Where(x => x.DateHired == searchDateHired).ToList();
-
-            //TODO 3: Refine Search salary
-            if (searchSalary > 0)
-                trainers = trainers.Where(x => x.Salary == searchSalary).ToList();
-
-            //TODO 4: Search by Availability
-
-            //TODO 2: Search by Specialization
-            //if (!String.IsNullOrEmpty(searchSpecialization))
-            //    trainers = trainers.Where(x => x.Specializations.Where(s => s.SpecializationType.ToUpper().Contains(searchSpecialization.ToUpper())).ToList();
             #endregion
 
             int pageSize = pSize ?? 10;
@@ -195,11 +176,7 @@ namespace Assignment2.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
+            trainerRepo.Dispose();
         }
 
         public void TrainerSpecializationViewBags()

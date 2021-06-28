@@ -80,7 +80,7 @@ namespace Assignment2.Repositories
             db.SaveChanges();
         }
 
-        private bool disposed = false;
+        private readonly bool disposed = false;
         protected virtual void Dispose(bool disposing)
         {
             if (!this.disposed)

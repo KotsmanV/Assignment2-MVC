@@ -9,7 +9,7 @@ namespace Assignment2.Models.ViewModels
 {
     public class TrainerEditVM
     {
-        ApplicationDbContext db = new ApplicationDbContext();
+        readonly ApplicationDbContext db = new ApplicationDbContext();
 
         public Trainer Trainer { get; set; }
 

@@ -1,5 +1,4 @@
-﻿@*@model IEnumerable<Assignment2.Models.Trainer>*@
-@model PagedList.IPagedList<Assignment2.Models.Trainer>
+﻿@model PagedList.IPagedList<Assignment2.Models.Trainer>
 
 
 @using PagedList;
@@ -16,40 +15,25 @@
     @Html.ActionLink("Create New", "Create")
 </p>
 
-@*@using (Html.BeginForm())
-{
-    <label for="selectOption">Select Option:</label>
-    <select id="selectOption" name="selectOption">
-        <option value="FirstName">First Name</option>
-        <option value="LastName">Last Name</option>
-        <option value="DateHired">Date Hired</option>
-        <option value="Salary">Salary</option>
-    </select>
-    <br />
-    @Html.Label("Search Text")
-    @Html.TextBox("searchText", null, new { type = "search", @class = "form-control", placeholder = "Search" })
-    <input type="submit" value="Search" />
-}*@
-
-
-
 @using (Html.BeginForm("Index", "Trainer", FormMethod.Get))
 {
+    @Html.Label("Search Text:")
+    @Html.TextBox("searchText", null, new { type = "search", @class = "form-control", placeholder = "Search", autocomplete = "off" })
 
-    @Html.TextBox("searchFirstName", null, new { type = "search", @class = "form-control", placeholder = "Search by First Name", autocomplete = "off" })
-    @Html.TextBox("searchLastName", null, new { type = "search", @class = "form-control", placeholder = "Search by Last Name", autocomplete = "off" })
-    @Html.TextBox("searchSalary", null, new { type = "search", @class = "form-control", placeholder = "Search by Salary", autocomplete = "off" })
-    @Html.TextBox("searchDateHired", null, new { type = "date", @class = "form-control", placeholder = "Search by Date Hired", autocomplete = "off" })
-    @*@Html.TextBox("searchAvailability", null, new { type = "search", @class = "form-control", placeholder = "Search by Availability" })
-    @Html.TextBox("searchSpecialization", null, new { type = "search", @class = "form-control", placeholder = "Search by Specialization" })*@
-    <input type="submit" value="Search for Trainer" class="btn btn-primary" />
-    <input id="resetButton" type="button" name="Clear Form" value="Clear Form" class="btn btn-danger" />
+    <div class="form-group">
+        <label for="selectOption">Filtering Option:</label>
+        <select id="selectOption" name="selectOption" class="form-control">
+            <option value="FirstName">First Name</option>
+            <option value="LastName">Last Name</option>
+            <option value="DateHired">Date Hired</option>
+            <option value="Salary">Salary</option>
+            <option value="Specialization">Specialization</option>
+        </select>
+        <br />
+        <input type="submit" value="Search for Trainer" class="btn btn-primary" />
+        <input id="resetButton" type="button" name="Clear Form" value="Clear Form" class="btn btn-danger" />
+    </div>
 }
-
-
-
-
-
 
 <table class="table table-hover">
     <tr>
@@ -100,7 +84,7 @@
             </td>
             <td>
                 <ul>
-                    @foreach (var spec in trainer.Specializations)
+                    @foreach (var spec in trainer.Specializations.OrderBy(x=>x.SpecializationType))
                     {
                         <li>@spec.SpecializationType</li>
                     }
@@ -121,7 +105,7 @@
 
 Page @(Model.PageCount <Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
-@Html.PagedListPager(Model, x => Url.Action("Index", "GoTCharacter", new { page = x }))
+@Html.PagedListPager(Model, x => Url.Action("Index", "Trainer", new { page = x }))
 
 
 @section ResetSearchJS{

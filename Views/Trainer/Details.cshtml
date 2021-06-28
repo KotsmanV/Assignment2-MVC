@@ -39,7 +39,7 @@
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.DateHired)
+            <text>@Model.DateHired.ToShortDateString()</text>
         </dd>
 
         <dt>
@@ -48,6 +48,20 @@
 
         <dd>
             @Html.DisplayFor(model => model.IsAvailable)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Specializations)
+        </dt>
+
+        <dd>
+            <ul>
+                @foreach (var specialization in Model.Specializations)
+                {
+                    <li>@specialization.SpecializationType</li>
+                }
+            </ul>
+
         </dd>
 
     </dl>
