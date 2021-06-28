@@ -27,10 +27,11 @@ namespace Assignment2.Controllers
 
             ViewBag.ByLastName = String.IsNullOrEmpty(sortOrder) ? "LastNameDesc" : "";
             ViewBag.ByFirstName = sortOrder == "FirstNameAsc" ? "FirstNameDesc" : "FirstNameAsc";
-            ViewBag.BySpecialization = sortOrder == "SpecializationAsc" ? "SpecializationDesc" : "SpecializationAsc";
-            ViewBag.BySalary = sortOrder == "SalaryAsc" ? "SalaryDesc" : "SalaryAsc";
+            ViewBag.BySpecializationCount = sortOrder == "SpecializationAsc" ? "SpecializationDesc" : "SpecializationAsc";
+            ViewBag.BySalary = sortOrder == "SalaryAsc" ? "SalaryAsc" : "SalaryDesc";
             ViewBag.ByDateHired = sortOrder == "DateHiredAsc" ? "DateHiredDesc" : "DateHiredAsc";
-            ViewBag.ByAvailability = sortOrder == "Available" ? "Unavailable" : "Available";
+            ViewBag.ByAvailability = sortOrder == "Available" ? "Available" : "Unavailable";
+            
 
             switch (sortOrder)
             {
@@ -39,8 +40,8 @@ namespace Assignment2.Controllers
                 case "FirstNameAsc": trainers = trainers.OrderBy(x => x.FirstName).ToList(); break;
                 case "FirstNameDesc": trainers = trainers.OrderByDescending(x => x.FirstName).ToList(); break;
 
-                //case "SpecializationAsc": trainers = trainers.OrderBy(x => x.Specializations).ToList(); break;
-                //case "SpecializationDesc": trainers = trainers.OrderByDescending(x => x.Specializations).ToList(); break;
+                case "SpecializationAsc": trainers = trainers.OrderBy(x => x.Specializations.Count).ToList(); break;
+                case "SpecializationDesc": trainers = trainers.OrderByDescending(x => x.Specializations.Count).ToList(); break;
 
                 case "DateHiredAsc": trainers = trainers.OrderBy(x => x.DateHired).ToList(); break;
                 case "DateHiredDesc": trainers = trainers.OrderByDescending(x => x.DateHired).ToList(); break;
@@ -65,6 +66,7 @@ namespace Assignment2.Controllers
                     case "DateHired": trainers = trainers.Where(x => x.DateHired == DateTime.Parse(searchText)).ToList(); break;
                     case "Salary": trainers = trainers.Where(x => x.Salary == Decimal.Parse(searchText)).ToList(); break;
                     case "Specialization": trainers = trainers.Where(x => x.Specializations.Any(y => y.SpecializationType.Equals(searchText))).ToList(); break;
+                    case "Availability": trainers = trainers.Where(x => x.IsAvailable == Boolean.Parse(searchText)).ToList(); break;
                 }
             }
             #endregion

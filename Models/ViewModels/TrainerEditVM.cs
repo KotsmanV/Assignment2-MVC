@@ -32,8 +32,5 @@ namespace Assignment2.Models.ViewModels
                 }).OrderBy(x=>x.Text) ;
             }
         }
-
-
-
     }
 }

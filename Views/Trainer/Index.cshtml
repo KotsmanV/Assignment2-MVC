@@ -17,9 +17,6 @@
 
 @using (Html.BeginForm("Index", "Trainer", FormMethod.Get))
 {
-    @Html.Label("Search Text:")
-    @Html.TextBox("searchText", null, new { type = "search", @class = "form-control", placeholder = "Search", autocomplete = "off" })
-
     <div class="form-group">
         <label for="selectOption">Filtering Option:</label>
         <select id="selectOption" name="selectOption" class="form-control">
@@ -28,38 +25,46 @@
             <option value="DateHired">Date Hired</option>
             <option value="Salary">Salary</option>
             <option value="Specialization">Specialization</option>
+            <option value="Availability">Availability</option>
         </select>
-        <br />
-        <input type="submit" value="Search for Trainer" class="btn btn-primary" />
-        <input id="resetButton" type="button" name="Clear Form" value="Clear Form" class="btn btn-danger" />
+
+        @Html.Label("Search Text:")
+        @Html.TextBox("searchText", null, new { id = "searchBox", type = "search", @class = "form-control", placeholder = "Search", autocomplete = "off" })
+
+
+        <input id="searchButton" type="submit" value="Search for Trainer" class="btn btn-success" />
+        <input id="resetButton" type="button" name="Clear Form" value="View All" class="btn btn-warning" />
     </div>
+
+
 }
+
+@*<div id="searchResults">
+    <label for="result"><strong>Search results for</strong></label>
+    <text id="result"></text>
+</div>*@
+
 
 <table class="table table-hover">
     <tr>
         <th>
             @Html.ActionLink("Last Name", "Index", "Trainer", new { sortOrder = ViewBag.ByLastName }, null)
-            @*@Html.DisplayNameFor(model => model.LastName)*@
         </th>
         <th>
             @Html.ActionLink("First Name", "Index", "Trainer", new { sortOrder = ViewBag.ByFirstName }, null)
-            @* @Html.DisplayNameFor(model => model.FirstName)*@
         </th>
         <th>
             @Html.ActionLink("Salary", "Index", "Trainer", new { sortOrder = ViewBag.BySalary }, null)
-            @*@Html.DisplayNameFor(model => model.Salary)*@
         </th>
         <th>
             @Html.ActionLink("Date Hired", "Index", "Trainer", new { sortOrder = ViewBag.ByDateHired }, null)
-            @*@Html.DisplayNameFor(model => model.DateHired)*@
         </th>
         <th>
-            Specializations
-            @*@Html.DisplayNameFor(model => model.Specializations)*@
+
+            @Html.ActionLink("Specializations", "Index", "Trainer", new { sortOrder = ViewBag.BySpecializationCount }, null)
         </th>
         <th>
             @Html.ActionLink("Availability", "Index", "Trainer", new { sortOrder = ViewBag.ByAvailability }, null)
-            @*@Html.DisplayNameFor(model => model.IsAvailable)*@
         </th>
         <th>
             Actions
@@ -84,7 +89,7 @@
             </td>
             <td>
                 <ul>
-                    @foreach (var spec in trainer.Specializations.OrderBy(x=>x.SpecializationType))
+                    @foreach (var spec in trainer.Specializations.OrderBy(x => x.SpecializationType))
                     {
                         <li>@spec.SpecializationType</li>
                     }
@@ -108,16 +113,62 @@ Page @(Model.PageCount <Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageC
 @Html.PagedListPager(Model, x => Url.Action("Index", "Trainer", new { page = x }))
 
 
-@section ResetSearchJS{
+@section ViewAllButtonJS{
     <script>
         $("#resetButton").click(function (e) {
-            $("#searchFirstName").val("");
-            $("#searchLastName").val("");
-            $("#searchSalary").val("");
-            $("#searchDateHired").val("");
             window.location.href='@Url.Action("Index", "Trainer")';
         });
     </script>
-
 }
+
+@section SearchInputChangeJS{
+    <script>
+        $("#selectOption").on('change', (function () {
+            var option = $("#selectOption").val();
+            var searchBox = $("#searchBox");
+            if (option == 'DateHired') {
+                searchBox.attr('type', 'date');
+            }
+            else if (option == 'Availability') {
+                searchBox.replaceWith(
+                    `
+                                <label for="searchText">Availability</label>
+                                <select id="searchText" name="searchText" class="form-control">
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            `);
+            }
+            else {
+                searchBox.attr('type', 'search')
+            }
+        }));
+    </script>
+}
+
+@section ResetSearchOnRefreshJS{
+    <script>
+        $(window).on('load', function () {
+            $("#searchBox").val("");
+        });
+    </script>
+}
+
+@*@section GetSearchButtonData{
+    <script>
+        $("#searchButton").click(function () {
+            var selectOption = $("#selectOption").val();
+            var searchText = $("#searchBox").val();
+            console.log(selectOption);
+            console.log(searchText);
+            $("#searchResults").html(
+                `
+                <label for="result"><strong>Search results for</strong></label>
+                <text id="result"><strong>${selectOption}</strong><i>${searchText}</i></text>
+                `
+            );
+        });
+    </script>
+    }*@
+
+
 
